@@ -570,6 +570,22 @@ def gradio_app():
 
     return app
 
+# Apply monkey patch to fix Gradio's URL handling behind a proxy
+import gradio.route_utils
+original_get_api_call_path = gradio.route_utils.get_api_call_path
+
+def patched_get_api_call_path(request):
+    try:
+        return original_get_api_call_path(request)
+    except ValueError:
+        path = request.url.path
+        if not path:
+            path = "/"
+        return f"{path}/api"
+
+# Apply the patch
+gradio.route_utils.get_api_call_path = patched_get_api_call_path
+
 # Initialize model manager
 MODEL_MANAGER = WhisperXManager()
 
