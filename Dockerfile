@@ -1,9 +1,5 @@
 # Base image with CUDA runtime
-FROM nvidia/cuda:12.8.1-runtime-ubuntu24.04
-
-# Environment variables
-ENV HF_TOKEN=
-ENV GRADIO_ROOT=
+FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -43,14 +39,17 @@ ENV PATH="/app/venv/bin:$PATH"
 # Create output directory
 RUN mkdir -p /app/whisperx_output && chown appuser:appuser /app/whisperx_output
 
-# Copy application code
-COPY --chown=appuser:appuser app.py /app/
-
 # Copy requirements file
 COPY --chown=appuser:appuser requirements.txt /app/
 
+# Install torch dependencies
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY --chown=appuser:appuser app.py /app/
 
 # Expose the port for the Gradio web interface
 EXPOSE 7860
