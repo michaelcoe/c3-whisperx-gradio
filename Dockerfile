@@ -42,9 +42,6 @@ RUN mkdir -p /app/whisperx_output && chown appuser:appuser /app/whisperx_output
 # Copy requirements file
 COPY --chown=appuser:appuser requirements.txt /app/
 
-# Install torch dependencies
-RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
