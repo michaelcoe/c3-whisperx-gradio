@@ -6,8 +6,8 @@ import whisperx
 from pathlib import Path
 
 # Constants and defaults
-DEFAULT_MODEL = "medium"
-OUTPUT_FORMAT_CHOICES = ["all", "srt", "vtt", "txt", "tsv", "json", "aud"]
+DEFAULT_MODEL = "large-v2"
+OUTPUT_FORMAT_CHOICES = ["txt", "all", "srt", "vtt", "tsv", "json", "aud"]
 COMPUTE_TYPE_CHOICES = ["float16", "float32", "int8"]
 INTERPOLATE_METHOD_CHOICES = ["nearest", "linear", "ignore"]
 VAD_METHOD_CHOICES = ["pyannote", "silero"]
@@ -319,7 +319,7 @@ def gradio_app():
                     label="Task"
                 )
                 language = gr.Textbox(
-                    value="",
+                    value="en",
                     placeholder="Auto-detect if empty",
                     label="Language Code (e.g., en, fr, de)"
                 )
@@ -592,5 +592,15 @@ MODEL_MANAGER = WhisperXManager()
 app = gradio_app()
 
 if __name__ == "__main__":
+    default_app_config = ApplicationConfig.create_default()
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--server_name", type=str, default=default_app_config.server_name, \
+                        help="The host or IP to bind to. If None, bind to localhost.") # None
+    parser.add_argument("--server_port", type=int, default=default_app_config.server_port, \
+                        help="The port to bind to.") # 7860
+    parser.add_argument("--root_path", type=str, default=default_app_config.root_path, \
+                        help="Root path.")
+    args = parser.parse_args().__dict__
+    updated_config = default_app_config.update(**args)
     app.queue()
-    app.launch(server_name="0.0.0.0", server_port=7860)
+    app.launch(server_name=app_config.server_name, server_port=app_config.server_port,root_path=app_config.root_path)
