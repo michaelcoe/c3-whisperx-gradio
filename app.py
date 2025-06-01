@@ -1,9 +1,11 @@
 import os
+import argparse
 import json
 import torch
 import gradio as gr
 import whisperx
 from pathlib import Path
+
 
 # Constants and defaults
 DEFAULT_MODEL = "large-v2"
@@ -39,6 +41,7 @@ class WhisperXManager:
         self.model_name = None
         self.device = None
         self.compute_type = None
+
 
     def get_asr_model(self, model_name, device, compute_type):
         # Only reload if parameters have changed
@@ -592,15 +595,13 @@ MODEL_MANAGER = WhisperXManager()
 app = gradio_app()
 
 if __name__ == "__main__":
-    default_app_config = ApplicationConfig.create_default()
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--server_name", type=str, default=default_app_config.server_name, \
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--server_name", type=str, default='0.0.0.0', \
                         help="The host or IP to bind to. If None, bind to localhost.") # None
-    parser.add_argument("--server_port", type=int, default=default_app_config.server_port, \
+    parser.add_argument("--server_port", type=int, default='7890', \
                         help="The port to bind to.") # 7860
-    parser.add_argument("--root_path", type=str, default=default_app_config.root_path, \
+    parser.add_argument("--root_path", type=str, default='/', \
                         help="Root path.")
-    args = parser.parse_args().__dict__
-    updated_config = default_app_config.update(**args)
+    _args = parser.parse_args()
     app.queue()
-    app.launch(server_name=app_config.server_name, server_port=app_config.server_port,root_path=app_config.root_path)
+    app.launch(server_name=_args.server_name, server_port=_args.server_port, root_path=_args.root_path)
