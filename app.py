@@ -252,9 +252,9 @@ def transcribe_audio(
                 oldspeaker = ''
                 for segment in result["segments"]:
                     if diarize and "speaker" in segment:
-                        # if still the same speaker, skip to just print segment
+                        # if still the same speaker, just print segment
                         if segment['speaker'] == oldspeaker:
-                            continue
+                            f.write(f"{segment['text'].strip()}\n")
                         # if new speaker, print speaker label
                         f.write("\n")
                         f.write(f"[{segment['speaker']}]: {segment['text'].strip()}\n")
