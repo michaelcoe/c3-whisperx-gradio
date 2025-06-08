@@ -249,9 +249,16 @@ def transcribe_audio(
             # 2. Plain text format
             txt_path = output_dir / f"{file_prefix}.txt"
             with open(txt_path, "w", encoding="utf-8") as f:
+                oldspeaker = ''
                 for segment in result["segments"]:
                     if diarize and "speaker" in segment:
+                        # if still the same speaker, skip to just print segment
+                        if segment['speaker'] == oldspeaker):
+                            continue
+                        # if new speaker, print speaker label
+                        f.write("\n")
                         f.write(f"[{segment['speaker']}]: {segment['text'].strip()}\n")
+                        oldspeaker = segment['speaker']
                     else:
                         f.write(f"{segment['text'].strip()}\n")
             output_files.append(str(txt_path))
