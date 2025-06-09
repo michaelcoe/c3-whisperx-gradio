@@ -708,7 +708,7 @@ def gradio_app():
                 inputs=[
                     # Input file
                     #audio_input,
-                    file_input
+                    file_input,
 
                     # Basic options
                     model, task, language, device, compute_type, batch_size,
