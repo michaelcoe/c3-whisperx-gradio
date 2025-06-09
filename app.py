@@ -4,6 +4,7 @@ import json
 import torch
 import gradio as gr
 import whisperx
+import subprocess
 from pathlib import Path
 
 
