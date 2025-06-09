@@ -80,9 +80,32 @@ def format_timestamp(seconds, always_include_hours=False, decimal_marker="."):
         f"{hours_marker}{minutes:02d}:{seconds:02d}{decimal_marker}{milliseconds:03d}"
     )
 
+def is_video_file(file_path):
+    #TODO make this more robust; eg check streams using ffprobe
+    try:
+        video_extensions = ['.mp4', '.avi', '.mov', '.mkv', '.webm']  # Add other video extensions if needed
+        file_extension = os.path.splitext(file_path)[1].lower()
+        is_video = file_extension in video_extensions
+        return is_video
+    except Exception as e:
+        print(f"Error checking if file is a video: {e}")
+        return False
+
+def extract_audio_from_video(video_file, output_audio_file):
+    try:
+        print(f"Extracting audio from video file: {video_file}...")
+        command = ['ffmpeg', '-i', video_file, '-q:a', '0', '-map', 'a', output_audio_file, '-y']
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(f"Audio extracted to: {output_audio_file}")
+    except Exception as e:
+        print(f"Error extracting audio from video: {e}")
+
+    print(f"Audio extracted from video file: {video_file} and saved at: {output_audio_file}")
+
 def transcribe_audio(
     # Input file
-    audio_file,
+    #audio_file,
+    input_file,
 
     # Basic options
     model="large-v3",
@@ -144,6 +167,14 @@ def transcribe_audio(
     file_prefix = f"transcript_{timestamp}"
 
     try:
+        # for video input file, extract as audio
+        if is_video_file(input_file):
+            audio_file = os.path.splitext(input_file)[0] + ".mp3"
+            extract_audio_from_video(input_file, audio_file)
+            file_path = audio_file
+        else:
+            audio_file = input_file
+            
         # Handle both string paths and FileData objects
         if isinstance(audio_file, dict) and 'path' in audio_file:
             audio_path = audio_file['path']  # Extract path from FileData
@@ -441,7 +472,8 @@ def gradio_app():
 
         with gr.Column():
             # Input file
-            audio_input = gr.Audio(type="filepath", label="Upload Audio File")
+            #audio_input = gr.Audio(type="filepath", label="Upload Audio File")
+            file_input = gr.File()
 
             with gr.Accordion("Basic Options", open=True):
                 model = gr.Dropdown(
@@ -675,7 +707,8 @@ def gradio_app():
                 fn=transcribe_audio,
                 inputs=[
                     # Input file
-                    audio_input,
+                    #audio_input,
+                    file_input
 
                     # Basic options
                     model, task, language, device, compute_type, batch_size,
