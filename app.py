@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 # Constants and defaults
-DEFAULT_MODEL = "large-v2"
+DEFAULT_MODEL = "large-v3"
 OUTPUT_FORMAT_CHOICES = ["all", "txt", "html", "srt", "vtt", "tsv", "json", "aud"]
 COMPUTE_TYPE_CHOICES = ["float16", "float32", "int8"]
 INTERPOLATE_METHOD_CHOICES = ["nearest", "linear", "ignore"]
@@ -474,7 +474,7 @@ def gradio_app():
         with gr.Column():
             # Input file
             #audio_input = gr.Audio(type="filepath", label="Upload Audio File")
-            file_input = gr.File()
+            file_input = gr.File(label="Upload Audio/Video File")
 
             with gr.Accordion("Basic Options", open=True):
                 model = gr.Dropdown(
