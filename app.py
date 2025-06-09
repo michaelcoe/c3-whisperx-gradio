@@ -338,6 +338,10 @@ def transcribe_audio(
                 font-family: monospace;
               }
               
+              div.segments {
+                width: 90%;
+              }
+              
               p.segment {
                 display: flex;
                 align-items: center;
@@ -345,7 +349,7 @@ def transcribe_audio(
                 text-align: left;
               }
               
-              span.speaker.speakerid {
+              .speaker.speakerid {
                 font-family: monospace;
               }
               
@@ -438,12 +442,12 @@ def transcribe_audio(
 
                     if diarize and "speaker" in segment:
                         if segment['speaker'] != oldspeaker:
-                          f.write("\t\t<br />\n")
+                          f.write(f"\t\t\t<br /><p class=\"speaker speakerid\">{segment['speaker']}:</p>\n")
                           oldspeaker = segment['speaker']
-                        f.write(f"\t\t<p class=\"segment speaker {segment['speaker']}\">{segment['text'].strip()}</p>\n")
+                        f.write(f"\t\t\t<p class=\"segment speaker {segment['speaker']}\">{segment['text'].strip()}</p>\n")
                     else:
                         f.write(f"\t\t<p>{segment['text'].strip()}</p>\n")
-                f.write("\t</body>\n</html>\n")
+                f.write("\t\t</div>\t</body>\n</html>\n")
             output_files.append(str(html_path))
 
             # Read the TXT file content for display (no timestamps)
