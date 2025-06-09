@@ -9,7 +9,7 @@ from pathlib import Path
 
 # Constants and defaults
 DEFAULT_MODEL = "large-v2"
-OUTPUT_FORMAT_CHOICES = ["txt", "all", "srt", "vtt", "tsv", "json", "aud"]
+OUTPUT_FORMAT_CHOICES = ["all", "txt", "html", "srt", "vtt", "tsv", "json", "aud"]
 COMPUTE_TYPE_CHOICES = ["float16", "float32", "int8"]
 INTERPOLATE_METHOD_CHOICES = ["nearest", "linear", "ignore"]
 VAD_METHOD_CHOICES = ["pyannote", "silero"]
@@ -85,9 +85,9 @@ def transcribe_audio(
     audio_file,
 
     # Basic options
-    model="medium",
+    model="large-v3",
     task="transcribe",
-    language=None,
+    language="en",
     device="cuda",
     compute_type="float16",
     batch_size=16,
@@ -292,6 +292,27 @@ def transcribe_audio(
 
                     f.write(f"{start_time} --> {end_time}\n{text}\n\n")
             output_files.append(str(vtt_path))
+
+            # 5. HTML
+            html_path = output_dir / f"{file_prefix}.html"
+            with open(html_path, "w", encoding="utf-8") as f:
+                f.write("<html>\n\t<body>\n")
+                oldspeaker = ''
+                for segment in result["segments"]:
+
+                    if diarize and "speaker" in segment:
+                        # if still the same speaker, just print segment
+                        if segment['speaker'] == oldspeaker:
+                            f.write(f"{segment['text'].strip()}\n")
+                            continue
+                        # if new speaker, print speaker label
+                        f.write("\t\t<br />\n")
+                        f.write(f"\t\t<p class=\"{segment['speaker']}\">{segment['text'].strip()}</p>\n")
+                        oldspeaker = segment['speaker']
+                    else:
+                        f.write(f"\t\t<p>{segment['text'].strip()}</p>\n")
+                f.write("\t</body>\n</html>\n")
+            output_files.append(str(html_path))
 
             # Read the TXT file content for display (no timestamps)
             with open(txt_path, "r", encoding="utf-8") as f:
