@@ -295,8 +295,112 @@ def transcribe_audio(
 
             # 5. HTML
             html_path = output_dir / f"{file_prefix}.html"
+            css = """
+              body {
+                color-scheme: light dark;
+                color: #ffffffde;
+                background-color: #242424;
+              }
+              
+              span.timestamp {
+                font-family: monospace;
+              }
+              
+              p.segment {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                text-align: left;
+              }
+              
+              span.speaker.speakerid {
+                font-family: monospace;
+              }
+              
+              .speaker.SPEAKER_00 {
+                color: #59ffa1;
+              }
+              
+              .speaker.SPEAKER_01 {
+                color: #597aff;
+              }
+              
+              .speaker.SPEAKER_02 {
+                color: #f04f4f;
+              }
+              
+              .speaker.SPEAKER_03 {
+                color: #e29b16;
+              }
+              
+              .speaker.SPEAKER_04 {
+                color: #16c5e2;
+              }
+              
+              .speaker.SPEAKER_05 {
+                color: #8316e2;
+              }
+              
+              .speaker.SPEAKER_06 {
+                color: #e216af;;
+              }
+              
+              .speaker.SPEAKER_07 {
+                color: #16e29b;
+              }
+              
+              .speaker.SPEAKER_08 {
+                color: #3fe216;
+              }
+              
+              .speaker.SPEAKER_09 {
+                color: #9b16e2;
+              }
+              
+              .speaker.SPEAKER_10 {
+                color: #16bae2;
+              }
+              
+              .speaker.SPEAKER_11 {
+                color: #a9e216;
+              }
+              
+              .speaker.SPEAKER_12 {
+                color: #1676e2;
+              }
+              
+              .speaker.SPEAKER_13 {
+                color: #dcbeff;
+              }
+              
+              .speaker.SPEAKER_14 {
+                color: #aaffc3;
+              }
+              
+              .speaker.SPEAKER_15 {
+                color: #ffd8b1;
+              }
+              
+              .speaker.SPEAKER_16 {
+                color: #fabed4;
+              }
+              
+              .speaker.SPEAKER_17 {
+                color: #16e287;
+              }
+              
+              .speaker.SPEAKER_18 {
+                color: #16bae2;
+              }
+              
+              .speaker.SPEAKER_19 {
+                color: #a9a9a9;
+              }
+            """
             with open(html_path, "w", encoding="utf-8") as f:
-                f.write("<html>\n\t<body>\n")
+                f.write("<html>\n")
+                f.write(f"\t<head>\t\t<style>{css}\t\t</style>\t</head>")
+                f.write(f"\t<body>\n\t\t<div class=\"segments\">")
                 oldspeaker = ''
                 for segment in result["segments"]:
 
@@ -307,7 +411,7 @@ def transcribe_audio(
                             continue
                         # if new speaker, print speaker label
                         f.write("\t\t<br />\n")
-                        f.write(f"\t\t<p class=\"{segment['speaker']}\">{segment['text'].strip()}</p>\n")
+                        f.write(f"\t\t<p class=\"segment speaker {segment['speaker']}\">{segment['text'].strip()}</p>\n")
                         oldspeaker = segment['speaker']
                     else:
                         f.write(f"\t\t<p>{segment['text'].strip()}</p>\n")
