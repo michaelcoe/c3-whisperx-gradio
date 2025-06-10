@@ -255,7 +255,7 @@ def transcribe_audio(
             # Step 3: Perform diarization if enabled
             if diarize:
                 print("Performing diarization...")
-                diarize_model = whisperx.DiarizationPipeline(
+                diarize_model = whisperx.diarize.DiarizationPipeline(
                     device=device,
                     use_auth_token=hf_token
                 )
