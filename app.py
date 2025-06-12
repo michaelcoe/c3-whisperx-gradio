@@ -765,7 +765,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--server_name", type=str, default='0.0.0.0', \
                         help="The host or IP to bind to. If None, bind to localhost.") # None
-    parser.add_argument("--server_port", type=int, default='7890', \
+    parser.add_argument("--server_port", type=int, default='7860', \
                         help="The port to bind to.") # 7860
     parser.add_argument("--root_path", type=str, default='/', \
                         help="Root path.")
