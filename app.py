@@ -30,7 +30,7 @@ alignment with a fine-tuned speech recognition model. It also supports speaker d
 
 ### Notes
 - The transcription process may take a while depending on the model size and audio length
-- For diarization to work, you may need to set the `HF_TOKEN` environment variable
+- For diarization to work, you may need to set the `HF_TOKEN` environment variable (This was taken care of by the eResearch Team)
 - For custom alignment models, provide the model name or path
 """
 
@@ -769,6 +769,9 @@ if __name__ == "__main__":
                         help="The port to bind to.") # 7860
     parser.add_argument("--root_path", type=str, default='/', \
                         help="Root path.")
+    parser.add_argument("--max_file_size", type=int, default='300', \
+                        help="Max File Size")
     _args = parser.parse_args()
     app.queue()
-    app.launch(server_name=_args.server_name, server_port=_args.server_port, root_path=_args.root_path)
+    app.launch(server_name=_args.server_name, server_port=_args.server_port, root_path=_args.root_path,
+               max_file_size=_args.max_file_size * gr.FileSize.MB)
